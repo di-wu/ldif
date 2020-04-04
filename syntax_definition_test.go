@@ -3,13 +3,11 @@ package ldif
 import (
 	"io/ioutil"
 	"testing"
-
-	"github.com/di-wu/abnf"
 )
 
 func TestExample1(t *testing.T) {
 	raw, _ := ioutil.ReadFile("testdata/example1.ldif")
-	s := abnf.NewScanner(string(raw))
+	s := []rune(string(raw))
 	f := ldifFile(s)
 
 	t.Run("version", func(t *testing.T) {

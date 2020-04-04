@@ -1,4 +1,4 @@
-github.com/di-wu/abnf v0.0.0-20200326135428-3067d67824ad h1:kBPfRoLv6+lQiBojoO0KrY04LS34tW2cz4L6IPQ7PSI=
-github.com/di-wu/abnf v0.0.0-20200326135428-3067d67824ad/go.mod h1:MrFsqpUed33UhqMujZG/vLYCIhA5zjZibWKxtSM0lx8=
+github.com/di-wu/abnf v0.0.0-20200404154424-b36d71275dae h1:wiokxJHjLe8Uw5Zv0vYhyBJcFlXuDr7kLoJ9ptdtwPQ=
+github.com/di-wu/abnf v0.0.0-20200404154424-b36d71275dae/go.mod h1:19PATU1jWXlFyhk7tPFDGQ1A3NFeLVniQkzaMU1yfAo=
 github.com/di-wu/regen v0.0.0-20191224153906-041b1bce4065 h1:Iov2tpNADzF5m/JwT+c1A8u40GmJKpmZp9Sb3jrPIPI=
 github.com/di-wu/regen v0.0.0-20191224153906-041b1bce4065/go.mod h1:1AGOmC2ExxkWjWb7bQNwFD2+0PxttZRYlLeUayrARus=

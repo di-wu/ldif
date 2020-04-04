@@ -1,5 +1,6 @@
 version: 1
-dn: cn=Barbara Jensen, ou=Product Development, dc=airius, dc=com objectclass: top
+dn: cn=Barbara Jensen, ou=Product Development, dc=airius, dc=com
+objectclass: top
 objectclass: person
 objectclass: organizationalPerson
 cn: Barbara Jensen
