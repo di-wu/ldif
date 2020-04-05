@@ -2,7 +2,7 @@ package ldif
 
 import . "github.com/di-wu/abnf"
 
-func ldifFile(s []rune) *AST {
+func File(s []rune) *AST {
 	return Alts(
 		`ldif-file`,
 		ldifContent,

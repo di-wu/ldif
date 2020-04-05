@@ -8,7 +8,7 @@ import (
 func TestExample1(t *testing.T) {
 	raw, _ := ioutil.ReadFile("testdata/example1.ldif")
 	s := []rune(string(raw))
-	f := ldifFile(s)
+	f := File(s)
 
 	t.Run("version", func(t *testing.T) {
 		if f.GetNode("version:", true) == nil {
