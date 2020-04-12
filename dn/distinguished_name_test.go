@@ -56,3 +56,52 @@ func TestExample(t *testing.T) {
 		t.Errorf("expected \"US\", got %s", v)
 	}
 }
+
+func TestInformalDefinition(t *testing.T) {
+	for _, str := range []string{
+		// folded
+		`CN=Steve Kille,
+O=ISODE Consortium, C=GB`,
+		// multi-column format
+		`CN=Steve Kille,
+O=ISODE Consortium,
+C=GB`,
+		`CN=Christian Huitema, O=INRIA, C=FR`,
+		// semicolon (";")
+		`CN=Christian Huitema; O=INRIA; C=FR`,
+		// different attribute types
+		`CN=James Hacker,
+L=Basingstoke,
+O=Widget Inc,
+C=GB`,
+		// multi-valued relative distinguished name
+		`OU=Sales + CN=J. Smith, O=Widget Inc., C=US`,
+		//  quoting of a comma
+		`CN=L. Eagle, O="Sue, Grabbit and Runn", C=GB`,
+		`CN=L. Eagle, O=Sue\, Grabbit and Runn, C=GB`,
+	} {
+		if name([]rune(str)) == nil {
+			t.Errorf("could not parse string: %s", str)
+		}
+	}
+}
+
+func TestExamples(t *testing.T) {
+	for _, str := range []string{
+		`CN=Marshall T. Rose, O=Dover Beach Consulting, L=Santa Clara, ST=California, C=US`,
+		`CN=FTAM Service, CN=Bells, OU=Computer Science, O=University College London, C=GB`,
+		`CN=Markus Kuhn, O=University of Erlangen, C=DE`,
+		`CN=Steve Kille,
+O=ISODE Consortium,
+C=GB`,
+		`CN=Steve Kille ,
+
+O =   ISODE Consortium,
+C=GB`,
+		`CN=Steve Kille, O=ISODE Consortium, C=GB`,
+	} {
+		if name([]rune(str)) == nil {
+			t.Errorf("could not parse string: %s", str)
+		}
+	}
+}

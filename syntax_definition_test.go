@@ -1,14 +1,14 @@
 package ldif
 
 import (
+	"fmt"
 	"io/ioutil"
 	"testing"
 )
 
-func TestExample1(t *testing.T) {
+func TestExample(t *testing.T) {
 	raw, _ := ioutil.ReadFile("testdata/example1.ldif")
-	s := []rune(string(raw))
-	f := File(s)
+	f := File([]rune(string(raw)))
 
 	t.Run("version", func(t *testing.T) {
 		if f.GetNode("version:", true) == nil {
@@ -29,4 +29,15 @@ func TestExample1(t *testing.T) {
 			t.Errorf("did not find 2 records, got %d", l)
 		}
 	})
+}
+
+func TestExamples(t *testing.T) {
+	for i := 1; i < 8; i++ {
+		t.Run(fmt.Sprintf("example%d", i), func(t *testing.T) {
+			raw, _ := ioutil.ReadFile("testdata/example1.ldif")
+			if File([]rune(string(raw))) == nil {
+				t.Errorf("could not parse ldif file: example%d.ldif", i)
+			}
+		})
+	}
 }
