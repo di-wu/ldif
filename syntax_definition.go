@@ -1,8 +1,8 @@
 package ldif
 
-import . "github.com/di-wu/abnf"
+import . "github.com/elimity-com/abnf/operators"
 
-func File(s []rune) *AST {
+func File(s []rune) Alternatives {
 	return Alts(
 		`ldif-file`,
 		ldifContent,
@@ -10,7 +10,7 @@ func File(s []rune) *AST {
 	)(s)
 }
 
-func ldifContent(s []rune) *AST {
+func ldifContent(s []rune) Alternatives {
 	return Concat(
 		`ldif-content`,
 		versionSpec,
@@ -22,7 +22,7 @@ func ldifContent(s []rune) *AST {
 	)(s)
 }
 
-func ldifChanges(s []rune) *AST {
+func ldifChanges(s []rune) Alternatives {
 	return Concat(
 		`ldif-changes`,
 		versionSpec,
@@ -34,7 +34,7 @@ func ldifChanges(s []rune) *AST {
 	)(s)
 }
 
-func ldifAttrvalRecord(s []rune) *AST {
+func ldifAttrvalRecord(s []rune) Alternatives {
 	return Concat(
 		`ldif-attrval-record`,
 		dnSpec,
@@ -43,7 +43,7 @@ func ldifAttrvalRecord(s []rune) *AST {
 	)(s)
 }
 
-func ldifChangeRecord(s []rune) *AST {
+func ldifChangeRecord(s []rune) Alternatives {
 	return Concat(
 		`ldif-change-record`,
 		dnSpec,
@@ -53,24 +53,24 @@ func ldifChangeRecord(s []rune) *AST {
 	)(s)
 }
 
-func versionSpec(s []rune) *AST {
+func versionSpec(s []rune) Alternatives {
 	return Concat(
 		`version-spec`,
-		String(`version:`, "version:", true),
+		StringCS(`version:`, "version:"),
 		fill,
 		versionNumber,
 	)(s)
 }
 
 // MUST be "1" for the LDIF format described in this document.
-func versionNumber(s []rune) *AST {
+func versionNumber(s []rune) Alternatives {
 	return Repeat1Inf(`version-number`, digit)(s)
 }
 
-func dnSpec(s []rune) *AST {
+func dnSpec(s []rune) Alternatives {
 	return Concat(
 		`dn-spec`,
-		String(`dn:`, "dn:", true),
+		StringCS(`dn:`, "dn:"),
 		Alts(
 			`FILL distinguishedName / ":" FILL base64-distinguishedName`,
 			Concat(
@@ -89,29 +89,29 @@ func dnSpec(s []rune) *AST {
 }
 
 // a distinguished name, as defined in RFC2253
-func distinguishedName(s []rune) *AST {
+func distinguishedName(s []rune) Alternatives {
 	return safeString(s)
 }
 
 // a distinguishedName which has been base64 encoded
-func base64DistinguishedName(s []rune) *AST {
+func base64DistinguishedName(s []rune) Alternatives {
 	return base64utf8String(s)
 }
 
 // a relative distinguished name, defined as <name-component> in RFC2253
-func rdn(s []rune) *AST {
+func rdn(s []rune) Alternatives {
 	return safeString(s)
 }
 
 // an rdn which has been base64 encoded
-func base64Rdn(s []rune) *AST {
+func base64Rdn(s []rune) Alternatives {
 	return base64utf8String(s)
 }
 
-func control(s []rune) *AST {
+func control(s []rune) Alternatives {
 	return Concat(
 		`control`,
-		String(`control:`, "control:", true),
+		StringCS(`control:`, "control:"),
 		fill,
 		ldapOid, // control type
 		Repeat(`0*1(1*SPACE ("true" / "false"))`, 0, 1, Concat(
@@ -119,8 +119,8 @@ func control(s []rune) *AST {
 			Repeat1Inf(`1*SPACE`, space),
 			Alts(
 				`"true" / "false"`,
-				String(`true`, "true", true),
-				String(`false`, "false", true),
+				StringCS(`true`, "true"),
+				StringCS(`false`, "false"),
 			),
 		)),                                         // criticality
 		Repeat(`0*1(value-spec)`, 0, 1, valueSpec), // control value
@@ -128,7 +128,7 @@ func control(s []rune) *AST {
 	)(s)
 }
 
-func ldapOid(s []rune) *AST {
+func ldapOid(s []rune) Alternatives {
 	return Concat(
 		`ldap-oid`,
 		Repeat1Inf(`1*DIGIT`, digit),
@@ -140,7 +140,7 @@ func ldapOid(s []rune) *AST {
 	)(s)
 }
 
-func attrvalSpec(s []rune) *AST {
+func attrvalSpec(s []rune) Alternatives {
 	return Concat(
 		`attrval-spec`,
 		attributeDescription,
@@ -149,7 +149,7 @@ func attrvalSpec(s []rune) *AST {
 	)(s)
 }
 
-func valueSpec(s []rune) *AST {
+func valueSpec(s []rune) Alternatives {
 	return Concat(
 		`value-spec`,
 		Rune(`:`, ':'),
@@ -176,11 +176,11 @@ func valueSpec(s []rune) *AST {
 	)(s)
 }
 
-func url(s []rune) *AST {
+func url(s []rune) Alternatives {
 	return Concat(`url`)(s) // TODO
 }
 
-func attributeDescription(s []rune) *AST {
+func attributeDescription(s []rune) Alternatives {
 	return Concat(
 		`AttributeDescription`,
 		attributeType,
@@ -192,7 +192,7 @@ func attributeDescription(s []rune) *AST {
 	)(s)
 }
 
-func attributeType(s []rune) *AST {
+func attributeType(s []rune) Alternatives {
 	return Alts(
 		`AttributeType`,
 		ldapOid,
@@ -204,7 +204,7 @@ func attributeType(s []rune) *AST {
 	)(s)
 }
 
-func options(s []rune) *AST {
+func options(s []rune) Alternatives {
 	return Alts(
 		`options`,
 		option,
@@ -217,11 +217,11 @@ func options(s []rune) *AST {
 	)(s)
 }
 
-func option(s []rune) *AST {
+func option(s []rune) Alternatives {
 	return Repeat1Inf(`option`, optChar)(s)
 }
 
-func attrTypeChars(s []rune) *AST {
+func attrTypeChars(s []rune) Alternatives {
 	return Alts(
 		`attr-type-chars`,
 		alpha,
@@ -230,14 +230,14 @@ func attrTypeChars(s []rune) *AST {
 	)(s)
 }
 
-func optChar(s []rune) *AST {
+func optChar(s []rune) Alternatives {
 	return attrTypeChars(s)
 }
 
-func changerecord(s []rune) *AST {
+func changerecord(s []rune) Alternatives {
 	return Concat(
 		`changerecord`,
-		String(`changetype:`, "changetype:", true),
+		StringCS(`changetype:`, "changetype:"),
 		fill,
 		Alts(
 			`change-add / change-delete / change-modify / change-moddn`,
@@ -249,33 +249,33 @@ func changerecord(s []rune) *AST {
 	)(s)
 }
 
-func changeAdd(s []rune) *AST {
+func changeAdd(s []rune) Alternatives {
 	return Concat(
 		`change-add`,
-		String(`add`, "add", true),
+		StringCS(`add`, "add"),
 		sep,
 		Repeat1Inf(`1*attrval-spec`, attrvalSpec),
 	)(s)
 }
 
-func changeDelete(s []rune) *AST {
+func changeDelete(s []rune) Alternatives {
 	return Concat(
 		`change-delete`,
-		String(`delete`, "delete", true),
+		StringCS(`delete`, "delete"),
 		sep,
 	)(s)
 }
 
-func changeModdn(s []rune) *AST {
+func changeModdn(s []rune) Alternatives {
 	return Concat(
 		`change-moddn`,
 		Alts(
 			`"modrdn" / "moddn"`,
-			String(`modrdn`, "modrdn", true),
-			String(`moddn`, "moddn", true),
+			StringCS(`modrdn`, "modrdn"),
+			StringCS(`moddn`, "moddn"),
 		),
 		sep,
-		String(`newrdn:`, "newrdn:", true),
+		StringCS(`newrdn:`, "newrdn:"),
 		Alts(
 			`FILL rdn / ":" FILL base64-rdn`,
 			Concat(
@@ -291,7 +291,7 @@ func changeModdn(s []rune) *AST {
 			),
 		),
 		sep,
-		String(`deleteoldrdn:`, "deleteoldrdn:", true),
+		StringCS(`deleteoldrdn:`, "deleteoldrdn:"),
 		fill,
 		Alts(
 			`"0" / "1"`,
@@ -301,7 +301,7 @@ func changeModdn(s []rune) *AST {
 		sep,
 		Repeat(`0*1("newsuperior:" (FILL distinguishedName / ":" FILL base64-distinguishedName) SEP)`, 0, 1, Concat(
 			`"newsuperior:" (FILL distinguishedName / ":" FILL base64-distinguishedName) SEP`,
-			String(`newsuperior:`, "newsuperior:", true),
+			StringCS(`newsuperior:`, "newsuperior:"),
 			Alts(
 				`FILL distinguishedName / ":" FILL base64-distinguishedName`,
 				Concat(
@@ -321,23 +321,23 @@ func changeModdn(s []rune) *AST {
 	)(s)
 }
 
-func changeModify(s []rune) *AST {
+func changeModify(s []rune) Alternatives {
 	return Concat(
 		`change-modify`,
-		String(`modify`, "modify", true),
+		StringCS(`modify`, "modify"),
 		sep,
 		Repeat0Inf(`*mod-spec`, modSpec),
 	)(s)
 }
 
-func modSpec(s []rune) *AST {
+func modSpec(s []rune) Alternatives {
 	return Concat(
 		`mod-spec`,
 		Alts(
 			`"add:" / "delete:" / "replace:"`,
-			String(`add:`, "add:", true),
-			String(`delete:`, "delete:", true),
-			String(`replace:`, "replace:", true),
+			StringCS(`add:`, "add:"),
+			StringCS(`delete:`, "delete:"),
+			StringCS(`replace:`, "replace:"),
 		),
 		fill,
 		attributeDescription,

@@ -1,5 +1,5 @@
-module github.com/di-wu/ldif
+module github.com/elimity-com/ldif
 
-go 1.13
+go 1.14
 
-require github.com/di-wu/abnf v0.0.0-20200404154424-b36d71275dae
+require github.com/elimity-com/abnf v0.0.0-20200604095209-4af5a0cb72bc

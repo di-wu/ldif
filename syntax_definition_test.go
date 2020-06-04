@@ -8,23 +8,23 @@ import (
 
 func TestExample(t *testing.T) {
 	raw, _ := ioutil.ReadFile("testdata/example1.ldif")
-	f := File([]rune(string(raw)))
+	f := File([]rune(string(raw))).Best()
 
 	t.Run("version", func(t *testing.T) {
-		if f.GetNode("version:", true) == nil {
+		if f.GetSubNode("version:") == nil {
 			t.Error("version not found")
 			return
 		}
 
-		if nr := f.GetNode("version-number", true); nr == nil {
+		if nr := f.GetSubNode("version-number"); nr == nil {
 			t.Error("version number not found")
-		} else if v := nr.ValueString(); v != "1" {
-			t.Errorf("version number was not 1, got %s", v)
+		} else if v := nr.Value; string(v) != "1" {
+			t.Errorf("version number was not 1, got %s", string(v))
 		}
 	})
 
 	t.Run("records", func(t *testing.T) {
-		records := f.GetAllNodes("ldif-attrval-record")
+		records := f.GetSubNodes("ldif-attrval-record")
 		if l := len(records); l != 2 {
 			t.Errorf("did not find 2 records, got %d", l)
 		}

@@ -3,12 +3,12 @@ package dn
 import (
 	"unicode/utf8"
 
-	. "github.com/di-wu/abnf"
+	. "github.com/elimity-com/abnf/operators"
 )
 
 // RFC 1779: 2.3 Formal definition
 
-func name(s []rune) *AST {
+func name(s []rune) Alternatives {
 	return Alts(
 		`name`,
 		Concat(
@@ -25,7 +25,7 @@ func name(s []rune) *AST {
 	)(s)
 }
 
-func spacedSeparator(s []rune) *AST {
+func spacedSeparator(s []rune) Alternatives {
 	return Concat(
 		`spaced-separator`,
 		optionalSpace,
@@ -34,7 +34,7 @@ func spacedSeparator(s []rune) *AST {
 	)(s)
 }
 
-func separator(s []rune) *AST {
+func separator(s []rune) Alternatives {
 	return Alts(
 		`separator`,
 		Rune(`,`, ','),
@@ -42,7 +42,7 @@ func separator(s []rune) *AST {
 	)(s)
 }
 
-func optionalSpace(s []rune) *AST {
+func optionalSpace(s []rune) Alternatives {
 	return Concat(
 		`optional-space`,
 		Optional(`[cr]`, cr),
@@ -50,7 +50,7 @@ func optionalSpace(s []rune) *AST {
 	)(s)
 }
 
-func nameComponent(s []rune) *AST {
+func nameComponent(s []rune) Alternatives {
 	return Alts(
 		`name-component`,
 		attribute,
@@ -65,7 +65,7 @@ func nameComponent(s []rune) *AST {
 	)(s)
 }
 
-func attribute(s []rune) *AST {
+func attribute(s []rune) Alternatives {
 	return Alts(
 		`attribute`,
 		str,
@@ -80,24 +80,24 @@ func attribute(s []rune) *AST {
 	)(s)
 }
 
-func key(s []rune) *AST {
+func key(s []rune) Alternatives {
 	return Alts(
 		`key`,
 		Repeat1Inf(`1*(keychar)`, keychar),
 		Concat(
 			`"OID." oid`,
-			String(`OID.`, "OID.", true),
+			StringCS(`OID.`, "OID."),
 			oid,
 		),
 		Concat(
 			`"oid." oid`,
-			String(`oid.`, "oid.", true),
+			StringCS(`oid.`, "oid."),
 			oid,
 		),
 	)(s)
 }
 
-func keychar(s []rune) *AST {
+func keychar(s []rune) Alternatives {
 	return Alts(
 		`keyChar`,
 		alpha,
@@ -106,7 +106,7 @@ func keychar(s []rune) *AST {
 	)(s)
 }
 
-func oid(s []rune) *AST {
+func oid(s []rune) Alternatives {
 	return Alts(
 		`oid`,
 		digitstring,
@@ -119,12 +119,12 @@ func oid(s []rune) *AST {
 	)(s)
 }
 
-func digitstring(s []rune) *AST {
+func digitstring(s []rune) Alternatives {
 	return Repeat1Inf(`digitstring`, digit)(s)
 }
 
 // string
-func str(s []rune) *AST {
+func str(s []rune) Alternatives {
 	return Alts(
 		`string`,
 		Repeat0Inf(`*(stringchar / pair)`, Alts(
@@ -151,7 +151,7 @@ func str(s []rune) *AST {
 	)(s)
 }
 
-func special(s []rune) *AST {
+func special(s []rune) Alternatives {
 	return Alts(
 		`special`,
 		Rune(`,`, ','),
@@ -165,7 +165,7 @@ func special(s []rune) *AST {
 	)(s)
 }
 
-func pair(s []rune) *AST {
+func pair(s []rune) Alternatives {
 	return Concat(
 		`pair`,
 		Rune(`\`, 92), // "\"
@@ -178,7 +178,7 @@ func pair(s []rune) *AST {
 	)(s)
 }
 
-func stringchar(s []rune) *AST {
+func stringchar(s []rune) Alternatives {
 	return Alts(
 		`stringchar`,
 		Range(`0-33`, 0, 33),
@@ -193,11 +193,11 @@ func stringchar(s []rune) *AST {
 	)(s)
 }
 
-func hex(s []rune) *AST {
+func hex(s []rune) Alternatives {
 	return Repeat(`hex`, 2, -1, hexchar)(s)
 }
 
-func hexchar(s []rune) *AST {
+func hexchar(s []rune) Alternatives {
 	return Alts(`hexchar`, digit,
 		Rune(`A`, 'A'), Rune(`B`, 'B'), Rune(`C`, 'C'),
 		Rune(`D`, 'D'), Rune(`E`, 'E'), Rune(`F`, 'F'),

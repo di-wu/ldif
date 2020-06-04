@@ -9,4 +9,4 @@ or a sequence of lines describing a set of changes to a directory entry.
 An LDIF file specifies a set of directory entries, or a set of changes to be applied to directory entries, but not both.
 
 ## Formal Syntax Definition of LDIF
-[ABNF Parser](https://github.com/di-wu/abnf/)
+[ABNF Parser](https://github.com/elimity-com/abnf/)
